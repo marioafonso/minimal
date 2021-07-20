@@ -65,6 +65,8 @@ document.addEventListener('keydown', function (event) {
         if (minimal.keymap[event.key.toUpperCase()]) {
             minimal.playNote(minimal.keymap[event.key.toUpperCase()], 0.35);
         } else if (event.key.toUpperCase() === "C") {
+            let sampleControl = document.getElementById("minimalSampleControl");
+            sampleControl.innerHTML = "recording...";
             minimal.recordSample().then((recordedChunks) => {
                 let recordedBlob   = new Blob(recordedChunks, { type: "audio/webm" });
                 minimal.setSample(recordedBlob);
@@ -73,8 +75,7 @@ document.addEventListener('keydown', function (event) {
                     recordedBlob.type + " media.");
 
                 // load interface for changing sample parameters
-                let sampleControl     = document.getElementById("minimalSampleControl"),
-                    sampleNoteDiv     = document.createElement("div"),
+                let sampleNoteDiv     = document.createElement("div"),
                     sampleNoteLabel   = document.createElement("label"),
                     sampleNoteSelect  = document.createElement("select"),
                     sampleDetuneDiv   = document.createElement("div"),
