@@ -17,7 +17,8 @@ var minimal = {
     detune          : 0,
     recorder        : null,
     sampleNoteIdx   : 39, // C4
-    volume          : 0.8,
+    synthVolume     : 0.8,
+    sampleVolume    : 0.8,
     portamento      : 0.01,
     sustainPedal    : false,
     audioStream     : null,
@@ -136,31 +137,19 @@ var minimal = {
         if (!velocity) {
             velocity = 0.8;
         }
-        velocity = velocity * this.volume;
 
         if (!length) {
             length = 8;
         }
 
-        let now  = this.audioCtx.currentTime,
-            gain = this.audioCtx.createGain();
-        gain.gain.setValueAtTime(velocity, now);
-        gain.connect(this.compressor);
-        if (this.bufferSource && synth && this.playSample) {
-            synth.gain = gain;
-            let noteIdx = this.noteNames.indexOf(synth.noteName); // C4 is 39
-            synth.bufferSource = this.audioCtx.createBufferSource();
-            synth.bufferSource.buffer = this.bufferSource;
-            synth.bufferSource.playbackRate.value = Math.pow(2, (noteIdx - this.sampleNoteIdx) / 12);
-            synth.bufferSource.detune.value = this.detune;
-            synth.bufferSource.connect(synth.gain);
-            synth.bufferSource.start(now);
-            synth.bufferSource.stop(now + length);
-        }
+        let now = this.audioCtx.currentTime;
         if (this.playSynth) {
-            let oscillator = this.audioCtx.createOscillator();
-            oscillator.setPeriodicWave(this.getCustomWave());
+            let gain       = this.audioCtx.createGain(),
+                oscillator = this.audioCtx.createOscillator();
+            gain.gain.setValueAtTime(velocity * this.synthVolume, now);
             gain.gain.setTargetAtTime(0, now, 0.8);
+            gain.connect(this.compressor);
+            oscillator.setPeriodicWave(this.getCustomWave());
             if (synth) {
                 synth.gain       = gain;
                 synth.oscillator = oscillator;
@@ -176,6 +165,19 @@ var minimal = {
             oscillator.start(now);
             oscillator.stop(now + length);
         }
+        if (this.bufferSource && synth && this.playSample) {
+            synth.sampleGain = this.audioCtx.createGain();
+            synth.sampleGain.gain.setValueAtTime(velocity * this.sampleVolume, now);
+            synth.sampleGain.connect(this.compressor);
+            let noteIdx = this.noteNames.indexOf(synth.noteName); // C4 is 39
+            synth.bufferSource = this.audioCtx.createBufferSource();
+            synth.bufferSource.buffer = this.bufferSource;
+            synth.bufferSource.playbackRate.value = Math.pow(2, (noteIdx - this.sampleNoteIdx) / 12);
+            synth.bufferSource.detune.value = this.detune;
+            synth.bufferSource.connect(synth.sampleGain);
+            synth.bufferSource.start(now);
+            synth.bufferSource.stop(now + length);
+        }
     },
 
     stopNote   : function(noteName, mandatory) {
@@ -186,10 +188,16 @@ var minimal = {
         } else {
             if (this.playing[noteName]) {
                 let now = this.audioCtx.currentTime;
-                this.playing[noteName].gain.gain.setTargetAtTime(0, now, 0.04); // smooth note release transition
+                if (this.playing[noteName].gain) {
+                    this.playing[noteName].gain.gain.setTargetAtTime(0, now, 0.04); // smooth note release transition
+                }
+                if (this.playing[noteName].sampleGain) {
+                    this.playing[noteName].sampleGain.gain.setTargetAtTime(0, now, 0.04); // smooth note release transition
+                }
                 if (this.bufferSource && this.playing[noteName].bufferSource) {
                     this.playing[noteName].bufferSource.stop(now + 0.4);
-                } else {
+                }
+                if (this.playing[noteName].oscillator) {
                     this.playing[noteName].oscillator.stop(now + 0.4);
                 }
                 delete this.playing[noteName];

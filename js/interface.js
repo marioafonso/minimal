@@ -3,47 +3,16 @@ console.log("usage: minimal.play(<frequency in Hz>, <velocity - 0.8 by default>,
 console.log("press and hold 'C' to record a C4 (or whatever) then play!");
 
 // load interface for changing minimal parameters
-let mainControl     = document.getElementById("minimalControl"),
+let synthControl    = document.getElementById("minimalSynthControl"),
+    playSynthDiv    = document.createElement("div"),
+    playSynthLabel  = document.createElement("label"),
+    playSynthInput  = document.createElement("input"),
     volumeDiv       = document.createElement("div"),
     volumeLabel     = document.createElement("label"),
     volumeInput     = document.createElement("input"),
-    synthControl    = document.getElementById("minimalSynthControl"),
     portamentoDiv   = document.createElement("div"),
     portamentoLabel = document.createElement("label"),
-    portamentoInput = document.createElement("input"),
-    playSynthDiv    = document.createElement("div"),
-    playSynthLabel  = document.createElement("label"),
-    playSynthInput  = document.createElement("input");
-
-volumeDiv.classList.add("sampleControl");
-portamentoDiv.classList.add("sampleControl");
-playSynthDiv.classList.add("sampleControl");
-
-volumeLabel.innerHTML = "Master volume";
-volumeInput.type  = "number";
-volumeInput.value = minimal.volume;
-volumeInput.max   = 1;
-volumeInput.min   = 0;
-volumeInput.step  = 0.1;
-volumeInput.addEventListener("change", () => {
-    minimal.volume = parseFloat(volumeInput.value);
-    document.activeElement.blur();
-});
-volumeDiv.appendChild(volumeLabel);
-volumeDiv.appendChild(volumeInput);
-
-portamentoLabel.innerHTML = "Synth portamento";
-portamentoInput.type  = "number";
-portamentoInput.value = minimal.portamento;
-portamentoInput.max   = 1;
-portamentoInput.min   = 0;
-portamentoInput.step  = 0.01;
-portamentoInput.addEventListener("change", () => {
-    minimal.portamento = parseFloat(portamentoInput.value);
-    document.activeElement.blur();
-});
-portamentoDiv.appendChild(portamentoLabel);
-portamentoDiv.appendChild(portamentoInput);
+    portamentoInput = document.createElement("input");
 
 playSynthLabel.innerHTML = "Play synth";
 playSynthInput.type = "checkbox";
@@ -54,10 +23,45 @@ playSynthInput.addEventListener("change", () => {
 });
 playSynthDiv.appendChild(playSynthLabel);
 playSynthDiv.appendChild(playSynthInput);
+playSynthDiv.classList.add("sampleControl");
 
-mainControl.appendChild(volumeDiv);
+volumeLabel.innerHTML = "Synth volume";
+volumeInput.type  = "number";
+volumeInput.value = minimal.synthVolume;
+volumeInput.max   = 1;
+volumeInput.min   = 0;
+volumeInput.step  = 0.1;
+volumeInput.addEventListener("change", () => {
+    if (volumeInput.value === "") {
+        volumeInput.value = minimal.synthVolume;
+    }
+    minimal.synthVolume = parseFloat(volumeInput.value);
+    document.activeElement.blur();
+});
+volumeDiv.appendChild(volumeLabel);
+volumeDiv.appendChild(volumeInput);
+volumeDiv.classList.add("sampleControl");
+
+portamentoLabel.innerHTML = "Synth portamento";
+portamentoInput.type  = "number";
+portamentoInput.value = minimal.portamento;
+portamentoInput.max   = 1;
+portamentoInput.min   = 0;
+portamentoInput.step  = 0.01;
+portamentoInput.addEventListener("change", () => {
+    if (portamentoInput.value === "") {
+        portamentoInput.value = minimal.portamento;
+    }
+    minimal.portamento = parseFloat(portamentoInput.value);
+    document.activeElement.blur();
+});
+portamentoDiv.appendChild(portamentoLabel);
+portamentoDiv.appendChild(portamentoInput);
+portamentoDiv.classList.add("sampleControl");
+
 synthControl.appendChild(playSynthDiv);
 synthControl.appendChild(portamentoDiv);
+synthControl.appendChild(volumeDiv);
 
 // keyboard events
 document.addEventListener('keydown', function (event) {
@@ -75,18 +79,49 @@ document.addEventListener('keydown', function (event) {
                     recordedBlob.type + " media.");
 
                 // load interface for changing sample parameters
-                let sampleNoteDiv     = document.createElement("div"),
+                let playSampleDiv     = document.createElement("div"),
+                    playSampleLabel   = document.createElement("label"),
+                    playSampleInput   = document.createElement("input"),
+                    volumeDiv         = document.createElement("div"),
+                    volumeLabel       = document.createElement("label"),
+                    volumeInput       = document.createElement("input"),
+                    sampleNoteDiv     = document.createElement("div"),
                     sampleNoteLabel   = document.createElement("label"),
                     sampleNoteSelect  = document.createElement("select"),
                     sampleDetuneDiv   = document.createElement("div"),
                     sampleDetuneLabel = document.createElement("label"),
-                    sampleDetuneInput = document.createElement("input"),
-                    playSampleDiv     = document.createElement("div"),
-                    playSampleLabel   = document.createElement("label"),
-                    playSampleInput   = document.createElement("input");
-                sampleControl.innerHTML     = "";
+                    sampleDetuneInput = document.createElement("input");
+                sampleControl.innerHTML = "";
 
+                playSampleLabel.innerHTML = "Play sample";
+                playSampleInput.type = "checkbox";
+                playSampleInput.checked = minimal.playSample;
+                playSampleInput.addEventListener("change", () => {
+                    minimal.playSample = playSampleInput.checked;
+                    document.activeElement.blur();
+                });
+                playSampleDiv.appendChild(playSampleLabel);
+                playSampleDiv.appendChild(playSampleInput);
+                playSampleDiv.classList.add("sampleControl");
                 sampleNoteLabel.innerHTML   = "Sample note";
+
+                volumeLabel.innerHTML = "Sample volume";
+                volumeInput.type  = "number";
+                volumeInput.value = minimal.sampleVolume;
+                volumeInput.max   = 1;
+                volumeInput.min   = 0;
+                volumeInput.step  = 0.1;
+                volumeInput.addEventListener("change", () => {
+                    if (volumeInput.value === "") {
+                        volumeInput.value = minimal.sampleVolume;
+                    }
+                    minimal.sampleVolume = parseFloat(volumeInput.value);
+                    document.activeElement.blur();
+                });
+                volumeDiv.appendChild(volumeLabel);
+                volumeDiv.appendChild(volumeInput);
+                volumeDiv.classList.add("sampleControl");
+
                 for (let idx = minimal.noteNames.length - 1; idx >= 0; idx--) {
                     let option = document.createElement("option");
                     option.value = idx;
@@ -100,6 +135,9 @@ document.addEventListener('keydown', function (event) {
                     minimal.sampleNoteIdx = parseInt(sampleNoteSelect.value);
                     document.activeElement.blur();
                 });
+                sampleNoteDiv.appendChild(sampleNoteLabel)
+                sampleNoteDiv.appendChild(sampleNoteSelect);
+                sampleNoteDiv.classList.add("sampleControl");
 
                 sampleDetuneLabel.innerHTML = "Sample detune";
                 sampleDetuneInput.type = "number";
@@ -107,30 +145,20 @@ document.addEventListener('keydown', function (event) {
                 sampleDetuneInput.max = 99;
                 sampleDetuneInput.min = -99;
                 sampleDetuneInput.addEventListener("change", () => {
+                    if (sampleDetuneInput.value === "") {
+                        sampleDetuneInput.value = minimal.detune;
+                    }
                     minimal.detune = parseInt(sampleDetuneInput.value);
                     document.activeElement.blur();
                 });
-
-                playSampleLabel.innerHTML = "Play sample";
-                playSampleInput.type = "checkbox";
-                playSampleInput.checked = minimal.playSample;
-                playSampleInput.addEventListener("change", () => {
-                    minimal.playSample = playSampleInput.checked;
-                    document.activeElement.blur();
-                });
-
-                sampleNoteDiv.classList.add("sampleControl");
-                sampleDetuneDiv.classList.add("sampleControl");
-                playSampleDiv.classList.add("sampleControl");
-                sampleNoteDiv.appendChild(sampleNoteLabel)
-                sampleNoteDiv.appendChild(sampleNoteSelect);
                 sampleDetuneDiv.appendChild(sampleDetuneLabel);
                 sampleDetuneDiv.appendChild(sampleDetuneInput);
-                playSampleDiv.appendChild(playSampleLabel);
-                playSampleDiv.appendChild(playSampleInput);
+                sampleDetuneDiv.classList.add("sampleControl");
+
                 sampleControl.appendChild(playSampleDiv);
                 sampleControl.appendChild(sampleNoteDiv);
                 sampleControl.appendChild(sampleDetuneDiv);
+                sampleControl.appendChild(volumeDiv);
                 sampleControl.classList.remove("hidden");
             });
         }
