@@ -21,7 +21,6 @@ var minimal = {
     portamento      : 0.01,
     sustainPedal    : false,
     audioStream     : null,
-    highPassFilter  : null,
     playSynth       : true,
     playSample      : true,
     ready           : false,
