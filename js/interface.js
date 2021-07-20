@@ -30,7 +30,7 @@ volumeInput.type  = "number";
 volumeInput.value = minimal.synthVolume;
 volumeInput.max   = 1;
 volumeInput.min   = 0;
-volumeInput.step  = 0.1;
+volumeInput.step  = 0.01;
 volumeInput.addEventListener("change", () => {
     if (volumeInput.value === "") {
         volumeInput.value = minimal.synthVolume;
@@ -110,7 +110,7 @@ document.addEventListener('keydown', function (event) {
                 volumeInput.value = minimal.sampleVolume;
                 volumeInput.max   = 1;
                 volumeInput.min   = 0;
-                volumeInput.step  = 0.1;
+                volumeInput.step  = 0.01;
                 volumeInput.addEventListener("change", () => {
                     if (volumeInput.value === "") {
                         volumeInput.value = minimal.sampleVolume;
