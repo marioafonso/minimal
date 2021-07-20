@@ -1,0 +1,45 @@
+body {
+    background-color: #333;
+    color: #aaa;
+}
+h1 {
+    text-align: center;
+    width: 100%;
+}
+label {
+    display: inline-block;
+    font-family: monospace;
+    text-align: left;
+    width: 190px;
+}
+input, select {
+    background-color: #aaa;
+    border: 0;
+    color: #333;
+    width: 50px;
+}
+.border {
+    border: solid 1px #aaa;
+    border-radius: 5px;
+}
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 600px;
+}
+.hidden {
+    display: none;
+}
+.marginBottom {
+    margin-bottom: 30px;
+}
+.noLineHeight {
+    line-height: 0;
+}
+.sampleControl {
+    display: inline-block;
+    margin: 5px 50px;
+    text-align: left;
+    width: 250px;
+}
