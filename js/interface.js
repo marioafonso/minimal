@@ -214,11 +214,10 @@ navigator.requestMIDIAccess({ sysex: true })
     });
 
 // audio input
-navigator.getUserMedia({audio: true, video: false},
-    (stream) => {
+navigator.mediaDevices.getUserMedia({audio: true, video: false})
+    .then((stream) => {
         minimal.audioStream = stream;
-    },
-    (error) => {
+    })
+    .catch((error) => {
         console.log("Unable to get the user media", error);
-    }
-);
+    });
