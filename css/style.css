@@ -29,6 +29,11 @@ input, select {
     text-align: center;
     width: 600px;
 }
+.footnote {
+    bottom: 0;
+    position: fixed;
+    right: 0;
+}
 .hidden {
     display: none;
 }
