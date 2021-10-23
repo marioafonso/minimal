@@ -1,6 +1,6 @@
 console.log("-= minimal synth =-");
 console.log("usage: minimal.play(<frequency in Hz>, <velocity - 0.8 by default>, <length in seconds - 8 by default>)");
-console.log("press and hold 'C' to record a C4 (or whatever) then play!");
+console.log("press and hold 'space' to record a C4 (or whatever) then play!");
 
 var minimalControl = (label, type, options) => {
     let cDiv   = document.createElement("div"),
@@ -85,10 +85,11 @@ synthControl.appendChild(volume);
 
 // keyboard events
 document.addEventListener('keydown', function (event) {
+    console.log(event);
     if (!event.repeat) {
         if (minimal.keymap[event.key.toUpperCase()]) {
             minimal.playNote(minimal.keymap[event.key.toUpperCase()], 0.35);
-        } else if (event.key.toUpperCase() === "C") {
+        } else if (event.keyCode === 32) {
             let sampleControl = document.getElementById("minimalSampleControl");
             sampleControl.innerHTML = "recording...";
             minimal.recordSample().then((recordedChunks) => {
@@ -154,7 +155,7 @@ document.addEventListener('keyup', function (event) {
     if (!event.repeat) {
         if (minimal.keymap[event.key.toUpperCase()]) {
             minimal.stopNote(minimal.keymap[event.key.toUpperCase()]);
-        } else if (event.key.toUpperCase() === "C") {
+        } else if (event.keyCode === 32) {
             if (minimal.recorder && minimal.recorder.state == "recording") {
                 minimal.recorder.stop();
             }
