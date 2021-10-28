@@ -17,7 +17,7 @@ var minimal = {
     detune          : 0,
     recorder        : null,
     sampleNoteIdx   : 39, // C4
-    synthVolume     : 0.8,
+    synthVolume     : 0.5,
     sampleVolume    : 0.8,
     portamento      : 0.01,
     sustainPedal    : false,
